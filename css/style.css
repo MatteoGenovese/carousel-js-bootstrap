@@ -30,3 +30,11 @@ body {
     justify-content: space-between;
     margin-top: 1rem;
 }
+
+.image-container img {
+    display: none;
+}
+
+.image-container img.active {
+    display: block;
+}
