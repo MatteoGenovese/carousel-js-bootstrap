@@ -30,7 +30,7 @@ for (let i = 0; i < imageList.length; i++) {
 }
 
 let index = 0;
-let isSliderGoingToNextSlide = true;
+let isDirectionGoingToNext = true;
 
 //select default image and dot
 let selectedImage = imageContainer.children[index];
@@ -47,12 +47,21 @@ let slider = setInterval(nextSlide, 3000);
 
 //functions to manage movement
 function prevSlide() {
+    changeNextSlide(false);
+}
+
+function nextSlide() {
+    changeNextSlide(true);
+}
+
+function changeNextSlide(isNewDirectionGoingOnNext) {
     selectedImage.classList.toggle("active");
     selectedDot.children[0].classList.toggle("d-none");
 
-    if (index != 0) {
-        index--;
-    } else {
+    index = isNewDirectionGoingOnNext ? index + 1 : index - 1;
+    if (index == imageContainer.children.length) {
+        index = 0;
+    } else if (index == -1) {
         index = imageContainer.children.length - 1;
     }
 
@@ -61,37 +70,17 @@ function prevSlide() {
     selectedDot = dotContainer.children[index];
     selectedDot.children[0].classList.toggle("d-none");
     clearInterval(slider);
-    slider = setInterval(prevSlide, 3000);
+    slider = isNewDirectionGoingOnNext
+        ? setInterval(nextSlide, 3000)
+        : setInterval(prevSlide, 3000);
 
-    //change direction of visualization
-    if (isSliderGoingToNextSlide) {
+    //change direction of visualization if this change
+    if (isNewDirectionGoingOnNext != isDirectionGoingToNext) {
         clearInterval(slider);
-        slider = setInterval(prevSlide, 3000);
-        isSliderGoingToNextSlide = false;
-    }
-}
-
-function nextSlide() {
-    selectedImage.classList.toggle("active");
-    selectedDot.children[0].classList.toggle("d-none");
-
-    if (index != imageContainer.children.length - 1) {
-        index++;
-    } else {
-        index = 0;
-    }
-
-    selectedImage = imageContainer.children[index];
-    selectedImage.classList.toggle("active");
-    selectedDot = dotContainer.children[index];
-    selectedDot.children[0].classList.toggle("d-none");
-    clearInterval(slider);
-    slider = setInterval(nextSlide, 3000);
-
-    //change direction of visualization
-    if (!isSliderGoingToNextSlide) {
-        clearInterval(slider);
-        slider = setInterval(nextSlide, 3000);
-        isSliderGoingToNextSlide = true;
+        slider = setInterval(
+            isNewDirectionGoingOnNext ? nextSlide : prevSlide,
+            3000
+        );
+        isDirectionGoingToNext = !isDirectionGoingToNext;
     }
 }
